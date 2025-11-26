@@ -4,10 +4,11 @@ Script to create a FastAPI project structure with empty files and directories.
 Includes a CLI to manage requirements.txt.
 """
 import os
+from site import venv
 import sys
 import subprocess
 from pathlib import Path
-
+import shutil
 
 def create_structure():
     """Create the complete directory and file structure inside app/ folder."""
@@ -65,11 +66,20 @@ def create_virtual_environment():
     venv_path = Path("venv")
 
     if venv_path.exists():
-        print(f"\n⚠ Virtual environment already exists at {venv_path}/")
-        response = input("Do you want to recreate it? (y/n): ").strip().lower()
-        if response != 'y':
-            print("Keeping existing virtual environment.")
-            return
+        while True:
+            print(f"\n⚠ Virtual environment already exists at {venv_path}/")
+            response = input("Do you want to recreate it? (y/n): ").strip().lower()
+            if response == 'n':
+                print("Keeping existing virtual environment.")
+                return
+            elif response == 'y':
+                try:
+                    shutil.rmtree(venv_path)
+                    print("Delete successfully")
+                    break
+                except OSError as e:
+                    print(f"Error deleting directory {e}")
+    
 
     print("\n📦 Creating virtual environment...")
     try:
